@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "gpt-controller"
+version = "0.1.0"
+description = "A framework that integrates chatGPT in the cognitive processes of a robotic system."
+authors = ["andrei-calin-dragomir <andrei.calin.dragomir@gmail.com>"]
+license = "Apache 2.0"
+readme = "README.md"
+packages = [{include = "gpt_controller"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+openai = "^0.27.8"
+mujoco = "^2.3.5"
+SQLAlchemy = "^2.0.15"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
