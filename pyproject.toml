@@ -1,17 +1,25 @@
 [tool.poetry]
 name = "gpt-controller"
-version = "0.1.0"
-description = "A framework that integrates chatGPT in the cognitive processes of a robotic system."
+version = "0.1.1"
+description = "LLM driven cognitive system for robotics applications."
 authors = ["andrei-calin-dragomir <andrei.calin.dragomir@gmail.com>"]
 license = "Apache 2.0"
 readme = "README.md"
-packages = [{include = "gpt_controller"}]
+packages = []
 
 [tool.poetry.dependencies]
-python = "^3.8"
-openai = "^0.27.8"
+python = ">=3.10,<3.12"
 mujoco = "^2.3.5"
-SQLAlchemy = "^2.0.15"
+openai = "^0.27.8"
+SQLAlchemy = "^2.0.16"
+python-statemachine = {extras = ["diagrams"], version = "^2.0.0"}
+ipykernel = "^6.23.1"
+pydot = "^1.4.2"
+tiktoken = "^0.4.0"
+
+[tool.poetry.group.dev.dependencies]
+pandas = "^2.0.2"
+pandasgui = "^0.2.14"
 
 
 [build-system]
