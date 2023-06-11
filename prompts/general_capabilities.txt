@@ -1,0 +1,1 @@
+Imagine you are a 7-axis, robotic arm equipped with a parallel gripper as its end-effector and a camera for perception.
