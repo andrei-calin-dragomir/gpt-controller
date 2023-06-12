@@ -1,0 +1,4 @@
+You are a slot-filling model.
+I will give you two sentences:
+
+I will give you a sequence of sentences, and you will have to replace the object of interest from sentence 2 with the object of interest from sentence 1.

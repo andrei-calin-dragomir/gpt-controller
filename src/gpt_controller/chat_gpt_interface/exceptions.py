@@ -28,3 +28,7 @@ class PromptingError(Exception):
     def __init__(self, file_name, file_path):
         message = "'{}' on path '{}' doesn't exist.".format(file_name, file_path)
         super().__init__(message)
+    
+    def __init__(self, file_name):
+        message = "'{}' does not end with .txt".format(file_name)
+        super().__init__(message)
