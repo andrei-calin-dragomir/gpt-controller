@@ -7,9 +7,9 @@ from gpt_controller.cognition import (
     reasoning,
 )
 # TODO #15 Fix the imports from util
-# from gpt_controller.util.labels import User_Input_Label, Action_label
+from src.gpt_controller.util.labels import User_Input_Label, Action_label
 
-# TODO #9 Implement state machine up to input entry and data access points
+
 # State Machine for the GPT Controller  (GPTC):
 class GPTControllerMachine(StateMachine):
     # Add the input processing at the end of each state. If there is no input, continue with task queue.
