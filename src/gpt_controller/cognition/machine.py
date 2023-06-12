@@ -51,7 +51,8 @@ class GPTControllerMachine(StateMachine):
         self.system_start_time = time.time()
         self.task_queue = []
         self.input_queue = []
-        self.long_term_engine = 
+        self.long_term_engine = None # TODO #10 Initialize from long-term memory class
+        self.short_term_engine = None # TODO #11 Initialize from short-term memory class
         super(GPTControllerMachine,self).__init__()
 
     def add_input(self, user_input):
