@@ -3,26 +3,9 @@ import openai
 import tiktoken
 import json
 from enum import Enum
-from gpt_controller.chat_gpt_interface import exceptions, api_tools
-from gpt_controller.chat_gpt_interface.exceptions import PromptingError
-from gpt_controller.config import OPENAI_API_KEY, RETRIES_TO_ABORT, PROMPT_PATH, CHATGPT_MODEL
-
-class Flag(Enum):
-    TASK                        : 1 # New task to be completed (e.g. "Pick up the tomato.")
-    QUESTION_ENV_KNOWLEDGE      : 2 # Question to be answered about the environment of the robot (e.g. "What is the color of the table?")
-    QUESTION_GEN_KNOWLEDGE      : 3 # Question to be answered about general knowledge (e.g. "How heavy is a tomato on average?")
-    ADVICE                      : 4 # Advice on how to complete a task (e.g. "You should pick up the tomato from above.")
-    ABORT                       : 5 # Abort the current task (e.g. "Stop what you're doing.")
-    PAUSE                       : 6 # Pause the current task but don't abort it (e.g. "Wait a moment.")
-    UNCERTAIN                   : 7 # None of the above tags apply (e.g. "I think cats are cute.")
-
-
-class Action_label(Enum):
-    PERCEIVE                    : 1 # Perceive the environment (e.g. "Detect the tomatoes.")
-    REASONING                   : 2 # Reasoning (e.g. "Which tomato should I pick up?")
-    MANIPULATION                : 3 # Manipulation (e.g. "Pick up the tomato.")
-    WAITING                     : 4 # Waiting (e.g. "Wait until user tells me to place the tomato.")
-    LOOP                        : 5 # Loop (e.g. "Repeat until all tomatoes are placed.")
+from gpt_controller.util.exceptions import PromptingError
+from gpt_controller.config import OPENAI_API_KEY, MAX_RETRIES, PROMPT_PATH, CHATGPT_MODEL
+from gpt_controller.util import exceptions
 
 class InHouseAPI():
 
@@ -45,7 +28,7 @@ class InHouseAPI():
         if user_request:
             message_history.append({"role": "user", "content": user_request})
             
-        for _ in range(int(RETRIES_TO_ABORT)):
+        for _ in range(int(MAX_RETRIES)):
             completion = openai.ChatCompletion.create(
                 model=CHATGPT_MODEL,
                 temperature=0,
@@ -54,7 +37,7 @@ class InHouseAPI():
             if completion.choices[0].finish_reason == "stop":
                 print(completion.choices[0].message.content)
                 if expected_output_type == "json":
-                    return api_tools.string_to_json(completion.choices[0].message.content)
+                    return self.completion_to_json(completion.choices[0].message.content)
                 else:
                     return completion.choices[0].message.content
         
@@ -68,7 +51,7 @@ class InHouseAPI():
 
             for prompt_name in prompt_list:
                 if not prompt_name.endswith(".txt"):
-                    raise PromptingError(prompt_name)
+                    raise PromptingError(prompt_name, PROMPT_PATH)
             prompt_deck = {}
             for prompt_name in prompt_list:
                 prompt_path = PROMPT_PATH + prompt_name
@@ -88,7 +71,7 @@ class InHouseAPI():
             environment_list = os.walk(self.environments_path).__next__()[2] # Get all files in
             for environment_name in environment_list:
                 if not environment_name.endswith(".txt"):
-                    raise PromptingError(environment_name)
+                    raise PromptingError(environment_name, PROMPT_PATH)
             environment_deck = {}
             for environment_name in environment_list:
                 environment_path = self.environments_path + environment_name

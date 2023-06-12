@@ -112,6 +112,13 @@ poetry install
     - Make pipeline for generating new goals
 
 6. Improvements
+    - Make the system more safe to colaborate:
+        - [ ] Parallelize the system so that it can run an event listener that processes input and handles `flag.PAUSE` or `flag.ABORT`.
+        - [ ] Add a new label to each task which represents one of the following importance values:
+            - `CRITICAL`        : the task is critical to the system and should not be interrupted.
+            - `INTERRUPTIBLE`   : the task is not critical to the system and can be interrupted by special commands.
+            - `LOOSE`           : the task is not critical to the system and can be interrupted by any command.
+        - [ ] Make event handler based on the `flag` enum and importance values.
     - Fine-tune slot filling models to increase accuracy.
     - Port prompts from `.txt` to `.json` files.
         - [ ] Create a script that converts the `.txt` files to `.json` files.

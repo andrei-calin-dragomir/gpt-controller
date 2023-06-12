@@ -7,6 +7,9 @@ SHORT_MEM_URL = 'sqlite:///memory.db'
 OPENAI_API_KEY = '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'
 CHATGPT_MODEL = 'gpt-3.5-turbo'
 
+# How long to idle until the machine closes (in seconds) (default: 120)
+IDLE_TIMEOUT = '120'
+
 # Whether to let chatGPT generate its own environments based on context provided by user
 SELF_TRAIN = False 
 
@@ -19,7 +22,7 @@ PERSISTENT_ENVIRONMENTS = False
 TOKEN_LIMIT = 100000
 
 # Number of retries if a completion fails (eg. wrong/broken format) (default: 3)
-RETRIES_TO_ABORT='3'
+MAX_RETRIES='3'
 
 # Path to prompt files (default: ./prompts/)
-PROMPT_PATH = './prompts/'
+PROMPT_PATH = './src/gpt_controller/chat_gpt_interface/prompts/'

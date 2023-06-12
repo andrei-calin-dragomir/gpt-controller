@@ -1,7 +1,8 @@
 import threading
 from gpt_controller.cognition import machine
-from gpt_controller.chat_gpt_interface import api_tools, exceptions
+from gpt_controller.chat_gpt_interface import api_tools
 from gpt_controller.app.util import triggers
+from gpt_controller.util import exceptions
 
 
 def input_listener(instance):
