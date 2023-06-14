@@ -22,7 +22,12 @@ git clone https://github.com/andrei-calin-dragomir/gpt-controller.git
 cd gpt-controller
 ```
 
-3. Install project dependencies:
+3. Install system project dependencies:
+
+Optional: The following package is required only for visualisations in the `evaluation_interface.ipynb` file.
+```bash
+sudo apt-get install graphviz
+```
 
 **Disclaimer:** Don't install dependencies manually. Use poetry instead:
 
@@ -34,6 +39,11 @@ poetry install
     Open the `config.py` file in the root directory and fill all the entries with the required information.
 
 5. Future ideas:
+    - UPDATE: chatGPT3.5 got upgraded to different context memory sizes and also improved _function calling_
+        - For 8k tokens: 0.0015$/1k tokens. "chatGPT3.5-turbo16"
+        - For 16k tokens: 0.003$/1k tokens.
+        This implies that for some states of the system, the larger model should be used.
+        Use case example: whenever trying to provide enough context for API descriptions of libraries, if the input requires more than x tokens, use model 
     - IMPORTANT: Save all interactions with timestamps to be previewed in the notebook.
     - Long-term memory for the controller:
         - This is an in-memory `SQLite` database driven by `SQLAlchemy` that stores:

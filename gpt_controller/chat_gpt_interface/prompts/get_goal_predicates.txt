@@ -12,6 +12,8 @@ The value of "predicates" must be a list in which each entry is represented by:
         VISUAL_FEEDBACK         : 2 # Visual feedback (e.g. "Is the object in my hand a tomato?")
         TACTILE_FEEDBACK        : 3 # Tactile feedback (e.g. "Is the tomato firmly grasped?")
 
+You must only answer with the JSON list, no prose.
+
 An example:
 My input task: "Pick up a tomato."
 
