@@ -24,5 +24,7 @@ TOKEN_LIMIT = 100000
 # Number of retries if a completion fails (eg. wrong/broken format) (default: 3)
 MAX_RETRIES='3'
 
-# Path to prompt files (default: ./prompts/)
-PROMPT_PATH = './src/gpt_controller/chat_gpt_interface/prompts/'
+# Path to prompt files (default: /gpt_controller/chat_gpt_interface/*)
+PROMPT_PATH = './gpt_controller/chat_gpt_interface/prompts/'
+ENV_PROMPT_PATH = './gpt_controller/chat_gpt_interface/environments/'
+LABEL_PROMPT_PATH = './gpt_controller/chat_gpt_interface/labels/'

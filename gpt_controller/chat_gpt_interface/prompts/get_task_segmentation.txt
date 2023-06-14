@@ -18,23 +18,23 @@ The value of "actions" must be a list in which each entry is represented by:
         "range": The range of the actions that are repeated in the loop based on the id of the actions.
         "sub_type" : "text" or "integer"
         "condition": The condition that is evaluated to break the loop.
-        The content of the condition must be either a textual description or an integer representing the number of iterations.
+        The content of the condition must be either a textual description or an integer representing the number of iterations and it should correspond to the sub_type entry.
     If the action is a "WAIT", it must also have:
         "sub_type" : "datetime" or "text" format of the condition
         "condition" : The condition that is evaluated to break the loop or the do another task until.
-        The content of the condition must be either a textual description or an ammount of time in datetime format that has been either provided in the prompt or you must estimate it based on your general knowledge.
-
+        The content of the condition must be either a textual description or an ammount of time in datetime format and it should correspond to the sub_type entry.
+        Waiting time will be either provided in the user input or you must estimate it based on your general knowledge if possible.
+     
 You must answer only with JSON code, no prose.
 
 An example
-    Input: "Pick up the tomatoes and place them in the basket when I tell you to."
+    Input: "Pick up the tomatoes and place them in the basket."
 
     Your response: {"command": "Pick up five tomatoes and place them in the basket when I tell you to.",
-                    "actions": [{"type": "PERCEPTION", "description": "Detect the basket.", "id": 1, "depends_on": []},
-                                {"type": "PERCEPTION", "description": "Detect the tomatoes.", "id": 2, "depends_on": []},
-                                {"type": "REASONING", "description": "Which tomato should I pick up?", "id": 3, "depends_on": [2]},
-                                {"type": "MANIPULATION", "description": "Pick up the tomato.", "id": 4, "depends_on": [2, 3]},
-                                {"type": "WAITING", "description": "Wait until user tells me to place the tomato.", "id": 5, "depends_on": [3], "sub_type" : "string", "condition": "When user signals me to place the tomato."},
-                                {"type": "MANIPULATION", "description": "Place the tomato in the basket.", "id": 6, "depends_on": [1,4]},
-                                {"type": "LOOP", "description": "Repeat until all tomatoes are placed.", "id": 7, "depends_on": [2], "range": [1-6], "sub_type": "integer", "condition": "5"}]}
-
+                    "actions": [{"type": "PERCEPTION", "description": "Detect the basket.", "id": "1", "depends_on": ""},
+                                {"type": "PERCEPTION", "description": "Detect the tomatoes.", "id": "2", "depends_on": ""},
+                                {"type": "REASONING", "description": "Which tomato should I pick up?", "id": "3", "depends_on": "2"},
+                                {"type": "MANIPULATION", "description": "Pick up the tomato.", "id": "4", "depends_on": "2, 3"},
+                                {"type": "WAITING", "description": "Wait until user tells me to place the tomato.", "id": "5", "depends_on": "3", "condition": "When user signals me to place the tomato."},
+                                {"type": "MANIPULATION", "description": "Place the tomato in the basket.", "id": "6", "depends_on": "1,4"},
+                                {"type": "LOOP", "description": "Repeat until all tomatoes are placed.", "id": "7", "depends_on": "2", "range": "1-6", "condition": "No more tomatoes to place."}]}
