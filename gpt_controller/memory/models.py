@@ -70,18 +70,6 @@ class ErrorCounter(Base):
     
     def __repr__(self):
         return json.dumps(model_to_dict(self))
-    
-
-# # Define the Action model
-
-#     __tablename__ = 'actions'
-    
-#     id              = Column(String, primary_key=True, default=uuid.uuid4)
-    
-#     action_type     = Column(Enum(ActionType), nullable=False)
-#     description     = Column(Text, nullable=False)
-    
-#     verb            = Column(String, nullable=False)
 
 # TODO: #5 Finish object model
 class Object(Base):
@@ -134,3 +122,10 @@ class Object(Base):
             return hashkeys
         else:
             return self.compression_set
+        
+class PerceptionTask(Base):
+    __tablename__ = 'perception_tasks'
+    
+    id              = Column(String, primary_key=True, default=uuid.uuid4)
+    
+    user_input_id   = Column(Integer, ForeignKey('user_inputs.id'))

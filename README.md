@@ -46,6 +46,8 @@ poetry install
                 - [ ] `speech` table: stores the speech actions that the system can perform.
                 - [ ] `vision` table: stores the vision actions that the system can perform.
             - Tables for each type of object that the system can interact with:
+                - [ ] `objects` table: stores the objects that the system can interact with.
+                - [ ] `object_attributes` table: stores the attributes of the objects that the system can interact with.
         - Long-term memory flushing to disk is either triggered by:
             - The user: can trigger flushing by saying "forget everything" or "forget the last thing I said".
             - The system can trigger flushing based on the `ATTENTION_SPAN` parameter found in the `config.py` file.

@@ -1,0 +1,35 @@
+Goal predicates represent targets that you want to validate at the end of a task to verify if you were successful or not in fulfilling a task. 
+I will give you a task and you will give me a list of goal predicates that you think are relevant to the task (at most 5, don't repeat yourself).
+The goal predicates must be represented as a JSON object.
+Each entry in the "predicate" entry of the JSON object has three keys: "goal", "importance" and "assessment_method".
+The "goal" key is a string that describes the goal predicate.
+The "importance" key is a float that represents the importance of the goal predicate.
+
+The value of "predicates" must be a list in which each entry is represented by:
+    "goal": a textual description of the goal predicate. (e.g. "Is the tomato firmly grasped?")
+    "assessment_method: The method of assessing the goal predicate.
+        USER_FEEDBACK           : 1 # User feedback (e.g. "Is this the tomato you want?")
+        VISUAL_FEEDBACK         : 2 # Visual feedback (e.g. "Is the object in my hand a tomato?")
+        TACTILE_FEEDBACK        : 3 # Tactile feedback (e.g. "Is the tomato firmly grasped?")
+
+An example:
+My input task: "Pick up a tomato."
+
+Your output:
+{
+    "predicates": [
+        {
+            "goal": "Is the object in my hand a tomato?",
+            "assessment_method": "VISUAL_FEEDBACK"
+        },
+        {
+            "goal": "Is the tomato firmly grasped?",
+            "assessment_method": "TACTILE_FEEDBACK"
+        },
+        {
+            "goal": "Is this the tomato you want?",
+            "assessment_method": "USER_FEEDBACK"
+        }
+    ]
+}
+
