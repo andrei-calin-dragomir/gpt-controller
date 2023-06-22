@@ -10,6 +10,7 @@ from gpt_controller.cognition import (
 )
 from queue import Queue
 # TODO #15 Fix the imports from util
+from gpt_controller.config import *
 from gpt_controller.util.labels import UserInputLabel, ActionLabel
 from gpt_controller.chat_gpt_interface import api_tools
 
@@ -34,7 +35,7 @@ class GPTControllerMachine(StateMachine):
 
     # Transitions
     # Process user input if available.
-    process_input = idle.to(decision_making) \
+    check_for_input = idle.to(decision_making) \
                 | idle.to.itself()
     
 
@@ -98,10 +99,16 @@ class GPTControllerMachine(StateMachine):
     #TODO #7 Implement self-training
     def self_train(self, environment):
         pass
+    
+    def process_input(self, input):
+        pass
 
     def run(self):
         machine = GPTControllerMachine(StateMachine)
         session_start = time.time()
+        
+        user_input = ""
+        user_input_label = UserInputLabel()
 
         pid = os.fork()
 
@@ -111,13 +118,14 @@ class GPTControllerMachine(StateMachine):
                 if machine.current_state == "Idle":
                     if not machine.input_queue.empty():
                         user_input = machine.input_queue.get()
-                        if machine.input_queue.get() == "q":
+                        if user_input == "q":
                             machine.current_state = "Shutting Down"
-                            machine.send('shutdown')
                         else:
-                            output = api_tools.request_completion('task_segmentation.txt', None, user_input, 'string')
-                            print(output)
-                    pass
+                            user_input_label = api_tools.request_completion("label_user_input.txt", LABEL_PROMPT_PATH, user_input)
+                            if user_input_label == "TASK":
+                                # TODO #8 Implement task queue
+                                machine.current_state = "Decision Making"
+                    
                 elif machine.current_state == "Decision Making":
                     pass
                 elif machine.current_state == "Communicating":

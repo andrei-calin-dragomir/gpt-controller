@@ -1,18 +1,22 @@
 import threading
 from gpt_controller.cognition import machine
 from gpt_controller.chat_gpt_interface import api_tools
-from gpt_controller.app.util import triggers
+from gpt_controller.interface.util import triggers
 from gpt_controller.util import exceptions
 
 
-def input_listener(instance):
-    while True:
-        user_input = input("Enter a command: ")
+from colorama import Fore, Style
 
-        input_type = api_tools.request_completion('user_input_flagging.txt', [user_input])
-        instance.add_input(user_input)
-        
-        raise triggers.UserInputTrigger()
+# Printing in different colors
+print(Fore.RED + "This text is red.")
+print(Fore.GREEN + "This text is green.")
+print(Fore.YELLOW + "This text is yellow.")
+print(Fore.BLUE + "This text is blue.")
+print(Fore.MAGENTA + "This text is magenta.")
+print(Fore.CYAN + "This text is cyan.")
+
+# Resetting the color
+print(Style.RESET_ALL + "This text is back to the default color.")
 
 def main():
 

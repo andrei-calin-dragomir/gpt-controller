@@ -1,5 +1,5 @@
 from threading import Thread
-from gpt_controller.app.util import triggers
+from gpt_controller.interface.util import triggers
 
 class PropagatingThread(Thread):
     def run(self):

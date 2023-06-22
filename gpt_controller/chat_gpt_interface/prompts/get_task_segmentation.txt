@@ -10,6 +10,7 @@ The value of "actions" must be a list in which each entry is represented by:
         WAITING                     : 4 # Waiting (e.g. "Wait until user tells me to place the tomato.")
         LOOP                        : 5 # Loop (e.g. "Repeat until all tomatoes are placed.")
     You must only use the names of the types, not the numbers.
+    A manipulation task can involve only one object.
 
     "description": A textual description of the action.
     "id": A unique id for the action. The id must be an integer.

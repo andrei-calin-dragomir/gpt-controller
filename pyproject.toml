@@ -16,6 +16,7 @@ python-statemachine = {extras = ["diagrams"], version = "^2.0.0"}
 ipykernel = "^6.23.1"
 pydot = "^1.4.2"
 tiktoken = "^0.4.0"
+colorama = "^0.4.6"
 
 [tool.poetry.group.dev.dependencies]
 pandas = "^2.0.2"

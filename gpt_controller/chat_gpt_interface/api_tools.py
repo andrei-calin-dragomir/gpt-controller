@@ -11,17 +11,17 @@ openai.api_key = OPENAI_API_KEY
 
 # Function to request a completion from the OpenAI API
 # Returns a JSON object or a string depending on the expected output type
-def request_completion(instruction_name, user_request=None):
+def request_completion(instruction_name, instruction_path, user_request=None):
     message_history = []
     if instruction_name:
-        instruction_path = PROMPT_PATH + str(instruction_name)
+        instruction_location = instruction_path + str(instruction_name)
         try:
-            with open(instruction_path, "r") as f:
+            with open(instruction_location, "r") as f:
                 prompt = f.read()
                 f.flush()
             message_history.append({"role": "system", "content": prompt})
         except OSError:
-            raise exceptions.PromptingError(instruction_name, instruction_path)
+            raise exceptions.PromptingError(instruction_name, instruction_location)
     
     if user_request:
         message_history.append({"role": "user", "content": user_request})
