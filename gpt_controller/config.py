@@ -4,7 +4,7 @@ SHORT_MEM_URL = 'sqlite:///memory.db'
 
 
 # API configuration
-OPENAI_API_KEY = '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'
+OPENAI_API_KEY = 'YOUR_API_KEY'
 CHATGPT_MODEL = 'gpt-3.5-turbo-0613'
 CHATGPT_CONTEXT_FRAME = 8129 # Tokens
 CHATGPT_MODEL_EXTENDED = 'gpt-3.5-turbo-16k'

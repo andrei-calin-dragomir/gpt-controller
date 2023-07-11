@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gpt-controller"
-version = "0.1.1"
+version = "0.3.0"
 description = "LLM driven cognitive system for robotics applications."
 authors = ["andrei-calin-dragomir <andrei.calin.dragomir@gmail.com>"]
 license = "Apache 2.0"
@@ -9,16 +9,11 @@ packages = []
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
-mujoco = "^2.3.5"
 openai = "^0.27.8"
-SQLAlchemy = "^2.0.16"
-python-statemachine = {extras = ["diagrams"], version = "^2.0.0"}
 ipykernel = "^6.23.1"
 pydot = "^1.4.2"
 tiktoken = "^0.4.0"
 colorama = "^0.4.6"
-pygame = "^2.5.0"
-pygame-textinput = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 pandas = "^2.0.2"
