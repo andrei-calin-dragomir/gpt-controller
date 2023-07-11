@@ -1,7 +1,0 @@
-You are a code templating system.
-You will receive a sequence of lines of code in python language, and a description of what task this code has fulfilled.
-You must output the code, but with the following changes:
-
-
-The robot has a set of actions that it can perform. The actions are divided into two categories: primitive and composite.
-Primitive actions are the basic actions that the robot can perform. Composite actions are actions that are composed of primitive actions.
