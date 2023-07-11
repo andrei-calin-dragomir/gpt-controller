@@ -6,7 +6,6 @@ This python project is meant to integrate chatGPT in the process of controlling 
 
 - Python 3.10
 - `poetry` package manager (`pip install poetry`)
-- `graphviz` for graph generation (`sudo apt install graphviz`) 
 
 ## Installation
 
