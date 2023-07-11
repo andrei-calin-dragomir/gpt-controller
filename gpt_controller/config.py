@@ -5,10 +5,12 @@ SHORT_MEM_URL = 'sqlite:///memory.db'
 
 # API configuration
 OPENAI_API_KEY = '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'
-CHATGPT_MODEL = 'gpt-3.5-turbo'
+CHATGPT_MODEL = 'gpt-3.5-turbo-0613'
+CHATGPT_CONTEXT_FRAME = 8129 # Tokens
+CHATGPT_MODEL_EXTENDED = 'gpt-3.5-turbo-16k'
 
 # How long to idle until the machine closes (in seconds) (default: 120)
-IDLE_TIMEOUT = '120'
+IDLE_TIMEOUT = 120
 
 # Whether to let chatGPT generate its own environments based on context provided by user
 SELF_TRAIN = False 
@@ -22,10 +24,10 @@ PERSISTENT_ENVIRONMENTS = False
 TOKEN_LIMIT = 100000
 
 # Number of retries if a completion fails (eg. wrong/broken format) (default: 3)
-MAX_RETRIES='3'
+MAX_RETRIES=3
+
+# Maximum context timespan (in seconds) (default: 120)
+MAX_TIMESPAN=120
 
 # Path to prompt files (default: /gpt_controller/chat_gpt_interface/*)
-PROMPT_PATH = './gpt_controller/chat_gpt_interface/prompts/'
-ENV_PROMPT_PATH = './gpt_controller/chat_gpt_interface/environments/'
-LABEL_PROMPT_PATH = './gpt_controller/chat_gpt_interface/labels/'
-EXPERIMENTAL_PROMPT_PATH = './gpt_controller/chat_gpt_interface/experimental/'
+PROMPT_PATH = './prompts/'
