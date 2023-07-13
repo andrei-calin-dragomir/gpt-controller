@@ -21,42 +21,6 @@ class Capability(Enum):
     USABLE = 'usable'
     VISIBLE = 'visible'
     CUTTABLE = 'cuttable'
-
-class Coordinates:
-    x : int
-    y : int
-    z : int
-
-    def __init__(self, values:dict[str, int]):
-        self.x = values['x']
-        self.y = values['y']
-        self.z = values['z']
-
-    def __iter__(self):
-        yield self.x
-        yield self.y
-        yield self.z
-
-    def __str__(self):
-        return "x: {} | y: {} | z: {}".format(self.x, self.y, self.z)
-    
-class Dimensions:
-    length : int
-    width : int
-    height : int
-
-    def __init__(self, values:dict[str, int]):
-        self.length = values['length']
-        self.width = values['width']
-        self.height = values['height']
-
-    def __str__(self):
-        representation : str = "length: {}".format(self.length)
-        if self.width is not None:
-            representation += " | width: {}".format(self.width)
-        if self.height is not None:
-            representation += " | height: {}".format(self.height)
-        return representation
     
 class Material(Enum):
     WOOD    = 'wood'
@@ -77,13 +41,18 @@ class Object:
     color : str = None
     shape : Shape = None
     material : Material = None
+    weight : int = None
 
     
     # Dimensions
-    dimensions : Dimensions = None
+    length : int = 0
+    width : int = 0
+    height : int = 0
     
     # Location
-    location : Coordinates = Coordinates({'x': 0, 'y': 0, 'z': 0})
+    x : int = 0
+    y : int = 0
+    z : int = 0
     support_surface : str = 'ground'
     
     # Capabilities
@@ -91,10 +60,12 @@ class Object:
     
     # Inventory
     contains: list[str] = field(default_factory=list)
+    container : str = None
     
     def __init__(self, attributes: dict[str, any]):
         self.contains = []
         self.capabilities = set()
+        self.capabilities.add(Capability.VISIBLE)
         for attribute, value in attributes.items():
             if attribute == 'name':
                 setattr(self, attribute, value)
@@ -103,25 +74,33 @@ class Object:
             elif attribute == 'material':
                 setattr(self, attribute, Material(value))
             elif attribute == 'dimensions':
-                setattr(self, attribute, Dimensions(value))
+                setattr(self, self.length, value[0])
+                setattr(self, self.width, value[1])
+                setattr(self, self.height, value[2])
             elif attribute == 'location':
-                setattr(self, attribute, Coordinates(value))
+                setattr(self, self.x, value[0])
+                setattr(self, self.y, value[1])
+                setattr(self, self.z, value[2])
             elif attribute == 'capabilities':
-                setattr(self, attribute, set([Capability(capability) for capability in json.loads(value)]))
+                self.capabilities.add(value)
             elif attribute == 'contains':
                 setattr(self, attribute, json.loads(value))
+            elif attribute == 'support_surface':
+                setattr(self, attribute, value)
             else:
                 setattr(self, attribute, value)
 
-    def verbose_description(self, attributes: list[str]):
+    def verbose_description(self, attributes: list[str]=None):
         object_description : str = "Object name: {} \n".format(self.name)
+        if attributes is None:
+            return object_description
         for attribute in attributes:
             if attribute == 'name': continue
             else:
                 value = getattr(self, attribute)
                 if isinstance(value, Enum):
                     object_description += "{} : {}".format(attribute, value.value)
-                elif isinstance(value, Coordinates | Dimensions):
+                elif isinstance(value, int):
                     object_description += "{} : {}".format(attribute, value)
                 elif isinstance(value, set):
                     object_description += "{} : {}".format(attribute, ", ".join([capability.value for capability in value]))
@@ -135,8 +114,8 @@ class Object:
         self.capabilities.add(capability)
     
     def check_capability(self, capability:Capability):
-        for capability in self.capabilities:
-            if capability == capability:
+        for own_capability in self.capabilities:
+            if capability == own_capability:
                 return True
         return False
     
@@ -237,9 +216,6 @@ class Task:
     stop_time : datetime = None
     total_time : timedelta = timedelta(seconds=0)
 
-    # ID's of subtasks that happened during this task
-    sub_tasks : list[int] = field(default_factory=list)
-
     def __init__(self, label : str | TaskLabel, goal : str):
         self.goal_predicates = {}
         if isinstance(label, str) : self.type = getattr(TaskLabel, label)
@@ -251,7 +227,7 @@ class Task:
         if goal_predicates: self.goal_predicates = goal_predicates
         if self.status == TaskStatus.NEW:
             self.start_time = datetime.now()
-        else:
+        elif self.status == TaskStatus.PAUSED:
             self.total_time = datetime.now() - self.stop_time
         self.status = TaskStatus.IN_PROGRESS
     
@@ -271,17 +247,17 @@ class Task:
         if self.type == TaskLabel.USER_INPUT:
             return "User: {}".format(self.goal)
         else:
-            return "{} Action: {}\nConclusion: {}\nStatus {}".format(self.type, 
-                                                                    self.goal, 
-                                                                    self.conclusion,
-                                                                    self.status.value)
+            if self.status == TaskStatus.FAILED:
+                return "The robot failed the action '{}' because of the following reason: {}".format(self.goal, 
+                                                                                                    self.conclusion)
+            else:
+                return "The robot concluded the following: {}".format(self.conclusion)
 
     def print_conclusion(self):
-        if self.status:
-            print(Fore.GREEN + "Robot: {}".format(self.conclusion))
+        if self.status != TaskStatus.FAILED:
+            print(Fore.GREEN + "Robot: {}".format(self.conclusion) + Style.RESET_ALL)
         else:
-            print(Fore.RED + "Robot: {}".format(self.conclusion))
-        print(Style.RESET_ALL)
+            print(Fore.RED + self.conclusion + Style.RESET_ALL)
 
 @dataclass
 class Function:

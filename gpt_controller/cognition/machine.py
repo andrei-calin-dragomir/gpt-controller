@@ -62,41 +62,29 @@ class Machine():
                             "description": "The material of the object",
                             "enum": list(Material.__members__.keys())
                         },
-                        "dimensions": {
-                            "type": "object",
-                            "description": "The dimensions of the object",
-                            "properties": {
-                                "width": {
-                                    "type": "number",
-                                    "description": "The width of the object"
-                                },
-                                "height": {
-                                    "type": "number",
-                                    "description": "The height of the object"
-                                },
-                                "length": {
-                                    "type": "number",
-                                    "description": "The depth of the object"
-                                }
-                            }
+                        "width": {
+                            "type": "number",
+                            "description": "The width of the object"
                         },
-                        "location": {
-                            "type": "object",
-                            "description": "The location of the object on the support surface, can be estimates or exact",
-                            "properties": {
-                                "x": {
-                                    "type": "number",
-                                    "description": "The x coordinate of the object"
-                                },
-                                "y": {
-                                    "type": "number",
-                                    "description": "The y coordinate of the object"
-                                },
-                                "z": {
-                                    "type": "number",
-                                    "description": "The z coordinate of the object"
-                                }
-                            }
+                        "height": {
+                            "type": "number",
+                            "description": "The height of the object"
+                        },
+                        "length": {
+                            "type": "number",
+                            "description": "The depth of the object"
+                        },
+                        "x": {
+                            "type": "number",
+                            "description": "The x coordinate of the object"
+                        },
+                        "y": {
+                            "type": "number",
+                            "description": "The y coordinate of the object"
+                        },
+                        "z": {
+                            "type": "number",
+                            "description": "The z coordinate of the object"
                         },
                         "support_surface": {
                             "type": "string",
@@ -137,41 +125,29 @@ class Machine():
                             "description": "The material of the object",
                             "enum": list(Material.__members__.keys())
                         },
-                        "dimensions": {
-                            "type": "object",
-                            "description": "The dimensions of the object",
-                            "properties": {
-                                "width": {
-                                    "type": "number",
-                                    "description": "The width of the object"
-                                },
-                                "height": {
-                                    "type": "number",
-                                    "description": "The height of the object"
-                                },
-                                "length": {
-                                    "type": "number",
-                                    "description": "The depth of the object"
-                                }
-                            }
+                        "width": {
+                            "type": "number",
+                            "description": "The width of the object"
                         },
-                        "location": {
-                            "type": "object",
-                            "description": "The location of the object on the support surface, can be estimates or exact",
-                            "properties": {
-                                "x": {
-                                    "type": "number",
-                                    "description": "The x coordinate of the object"
-                                },
-                                "y": {
-                                    "type": "number",
-                                    "description": "The y coordinate of the object"
-                                },
-                                "z": {
-                                    "type": "number",
-                                    "description": "The z coordinate of the object"
-                                }
-                            }
+                        "height": {
+                            "type": "number",
+                            "description": "The height of the object"
+                        },
+                        "length": {
+                            "type": "number",
+                            "description": "The depth of the object"
+                        },
+                        "x": {
+                            "type": "number",
+                            "description": "The x coordinate of the object"
+                        },
+                        "y": {
+                            "type": "number",
+                            "description": "The y coordinate of the object"
+                        },
+                        "z": {
+                            "type": "number",
+                            "description": "The z coordinate of the object"
                         },
                         "support_surface": {
                             "type": "string",
@@ -209,7 +185,7 @@ class Machine():
                     "properties": {
                         "attributes": {
                             "type": "array", 
-                            "description": "The attributes of the objects that should be loaded. (e.g. 'name', 'location', 'shape')",
+                            "description": "The attributes of the objects that should be loaded. (e.g. 'name', 'color', 'shape')",
                             "items": {
                                 "type": "string", 
                                 "enum": list(Object.__annotations__.keys())
@@ -296,7 +272,6 @@ class Machine():
         ]
 
         self.act_functions = {
-            "look_around_for_object": self.robot.vision.look_around_for_object,
             "search_in_container": self.robot.vision.search_in_container,
             "move_to_object": self.robot.navigator.move_to_object,
             "pick_up_object": self.robot.actuator.pick_up_object,
@@ -306,21 +281,24 @@ class Machine():
             "open_container": self.robot.actuator.open_container
         }
 
-    def load_environment_knowledge(self, attributes: list[str]):
+    def load_environment_knowledge(self, attributes: list[str]=None):
         object_memory : str = "Object Memory\n"
         for object in self.object_knowledge:
-            object_memory += object.verbose_description(attributes["attributes"]) + "\n"
+            object_memory += object.verbose_description(attributes) + "\n"
         return object_memory
 
-    def load_body_status(self, components:list[str]):
+    def load_body_status(self, components:list[str]=None):
         robot_knowledge : str = "Current Robot State:\n"
-        for component in components:
-            if component == "manipulator":
-                robot_knowledge += self.robot.actuator.verbose_description() + "\n"
-            if component == "vision":
-                robot_knowledge += self.robot.vision.verbose_description() + "\n"
-            if component == "navigator":
-                robot_knowledge += self.robot.navigator.verbose_description() + "\n"
+        if not components:
+            robot_knowledge += self.robot.actuator.verbose_description()
+        else:
+            for component in components:
+                if component == "manipulator":
+                    robot_knowledge += self.robot.actuator.verbose_description() + "\n"
+                if component == "vision":
+                    robot_knowledge += self.robot.vision.verbose_description() + "\n"
+                if component == "navigator":
+                    robot_knowledge += self.robot.navigator.verbose_description() + "\n"
         return robot_knowledge
     
     # Function that loads the activity logs of the system such as user inputs, robot actions, dialogue, reasoning process
@@ -375,15 +353,13 @@ class Machine():
                         label = self.label(sentence, UserInputLabel)
                         self.process_tagged_input(label, sentence)
                 except Exception as e:
-                    print(Fore.RED + "ERROR: {}".format(e))
+                    print(Fore.RED + "ERROR: {}".format(e) + Style.RESET_ALL)
                     raise Exception("I failed to execute the function for processing user input")
                 conversation.messages.append(Message(Role.ASSISTANT, completion['content']))
                 self.conversations.append(conversation)
-                print(Style.RESET_ALL)
                 return True
         except Exception as e:
-            print(Fore.RED + "ERROR: {}".format(e.args[0]))
-            print(Style.RESET_ALL)
+            print(Fore.RED + "ERROR: {}".format(e.args[0]) + Style.RESET_ALL)
             return False
     
     # Function that processes a sub-input resulted from the user's input based on their label.
@@ -392,9 +368,8 @@ class Machine():
             task = Task(TaskLabel.USER_INPUT, sentence)
             if self.task_stack and self.task_stack[-1].status == TaskStatus.IN_PROGRESS:
                 if len(self.task_stack) > 0:
-                    print(Fore.YELLOW +"Robot: Should I put the current task on hold: '{}'?".format(self.task_stack[-1].goal))
+                    print(Fore.YELLOW +"Robot: Should I put the current task on hold: '{}'?".format(self.task_stack[-1].goal) + Style.RESET_ALL)
                     while True:
-                        print(Style.RESET_ALL)
                         user_input = input("Your command (y/n): ")
                         if user_input == "y":
                             self.task_stack[-1].pause()
@@ -426,7 +401,7 @@ class Machine():
             print(Fore.GREEN + "Robot: {}".format(self.task_stack[-1].conclusion))
         elif label == UserInputLabel.UNCERTAIN:
             print(Fore.YELLOW + "Robot: I don't know what to do with this input: {}".format(sentence))
-        print(Style.RESET_ALL)
+        Style.RESET_ALL
         return
 
     # Generalized labelling function for any input
@@ -438,15 +413,13 @@ class Machine():
         label = None
         completion = self.process(conversation.messages)
         if completion is None:
-            print(Fore.RED + "ERROR: I failed to think of a label for your input: {}".format(input))
-            print(Style.RESET_ALL)
+            print(Fore.RED + "ERROR: I failed to think of a label for your input: {}".format(input) + Style.RESET_ALL)
         else:
             try:
                 label = getattr(tags, completion['content'])
                 conversation.messages.append(Message(Role.ASSISTANT, completion))
             except AttributeError as e:
-                print(Fore.RED + "ERROR: I assigned a bad label to your input: {}".format(e.args[0]))
-                print(Style.RESET_ALL)
+                print(Fore.RED + "ERROR: I assigned a bad label to your input: {}".format(e.args[0]) + Style.RESET_ALL)
                 pass
 
         self.conversations.append(conversation)
@@ -459,10 +432,9 @@ class Machine():
             
         completion = self.process(conversation.messages)
         if completion is None:
-            print(Fore.RED + "Robot: I have failed to think about your request '{}'.".format(input))
+            print(Fore.RED + "Robot: I have failed to think about your request '{}'.".format(input) + Style.RESET_ALL)
         else:
-            print(Fore.YELLOW + "Robot: {}".format(completion['content']))
-        print(Style.RESET_ALL)
+            print(Fore.YELLOW + "Robot: {}".format(completion['content']) + Style.RESET_ALL)
         conversation.messages.append(Message(Role.ASSISTANT, completion['content']))
         self.conversations.append(conversation)
         return
@@ -486,7 +458,7 @@ class Machine():
 
                 function_to_call = self.cognitive_functions[function_name]
                 try:
-                    function_response = function_to_call(list(function_args.values()))
+                    function_response = function_to_call(list(function_args.values())[0])
                 except Exception as e:
                     raise Exception("I failed to execute the function for loading memory: {}".format(e.args[0]))
                 
@@ -508,7 +480,7 @@ class Machine():
             return activity.status
     
     # Function that drives the robot to decide its next step in the sequence of actions
-    def make_decision(self, active_task_index:int) -> TaskStatus:
+    def make_decision(self, task_index: int) -> TaskStatus:
         try:
             activity = Task(TaskLabel.COGNITION, "Deciding what to do next...")
             activity.start()
@@ -517,18 +489,22 @@ class Machine():
             conversation.messages.append(Message(Role.USER, self.load_activity_logs()))
             conversation.messages.append(Message(Role.USER, self.load_body_status()))
             conversation.messages.append(Message(Role.USER, self.load_advice()))
-            conversation.messages.append(Message(Role.USER, "Your current goal: " + self.task_stack[active_task_index].goal))
+            conversation.messages.append(Message(Role.USER, "Your current goal: " + self.task_stack[task_index].goal))
+
 
             # Get the completion
             completion = self.process(conversation.messages)
             if completion is None:
                 raise Exception("I have failed to make a decision.")
+            elif "DONE" in completion['content']:
+                self.task_stack[task_index].complete("Done", True)
+                activity.complete("The task {} is complete".format(self.task_stack[task_index].goal), True)
             else:
                 label = self.label(completion['content'], TaskLabel)
                 if label is None:
                     raise Exception("I have failed to classify my decision.")
                 else:
-                    activity.complete("I decided to {}".format(completion['content']), True)
+                    activity.complete("Decision: {}".format(completion['content']), True)
                     self.task_stack.append(activity)
                     self.task_stack.append(Task(label, completion['content']))
                     conversation.messages.append(Message(Role.ASSISTANT, completion))
@@ -560,7 +536,7 @@ class Machine():
 
                     function_to_call = self.cognitive_functions[function_name]
                     try:
-                        function_response = function_to_call(list(function_args.values()))
+                        function_response = function_to_call(list(function_args.values())[0])
                     except Exception as e:
                         raise Exception("I failed to execute `{}` because: {}".format(function_name, e.args[0]))
                     
@@ -568,17 +544,23 @@ class Machine():
                                                         {"role": "function", "name": function_name, "content": function_response}))
                     conclusion = function_response
             elif self.task_stack[-1].type == TaskLabel.INQUIRY:
-                conversation.messages.append(Message(Role.SYSTEM, "You must formulate a question from the user input and ask it to me."))
+                conversation.messages.append(Message(Role.SYSTEM, "You must formulate a question based on the user input."))
                 conversation.messages.append(Message(Role.USER, self.task_stack[-1].goal))
                 completion = self.process(conversation.messages)
                 if completion is None:
                     raise Exception("I have failed to ask the user about '{}'.".format(self.task_stack[-1].goal))
                 else:
                     conclusion = completion['content']
+            elif self.task_stack[-1].type == TaskLabel.PERCEPTION:
+                self.recall(self.task_stack[-1].goal)
+                conclusion = self.task_stack[-1].conclusion
+                self.task_stack.pop()
             else:
                 conversation.messages.append(Message(Role.SYSTEM, self.load_prompt("act.txt")))
+                conversation.messages.append(Message(Role.USER, self.load_environment_knowledge()))
+                conversation.messages.append(Message(Role.USER, self.load_body_status()))
                 conversation.messages.append(Message(Role.USER, self.task_stack[-1].goal))
-                schemas = self.robot.actuator.manipulation_schemas if self.task_stack[-1].type == TaskLabel.MANIPULATION else self.robot.vision.vision_schemas if self.task_stack[-1].type == TaskLabel.PERCEPTION else self.robot.navigator.navigation_schemas
+                schemas = self.robot.actuator.manipulation_schemas if self.task_stack[-1].type == TaskLabel.MANIPULATION else self.robot.navigator.navigation_schemas
                 completion = self.process(conversation.messages, schemas, True)
                 if completion is None:
                     raise Exception("I have failed to choose the correct action.")
@@ -588,34 +570,34 @@ class Machine():
                         function_args : dict = json.loads(completion["function_call"]["arguments"])
                         function_to_call = self.act_functions[function_name]
                         try:
+                            # print("Function called: " + function_name)
+                            # print("Provided arguments: " + str(function_args))
                             function_response = function_to_call(**function_args)
                         except Exception as e:
                             raise Exception("I failed to execute `{}` because: {}".format(function_name, e.args[0]))
                         conversation.messages.append(Message(Role.ASSISTANT_FUNCTION_CALL,
                                                             {"role": "function", "name": function_name, "content": function_response}))
-                        conclusion = function_response 
-            self.task_stack[-1].complete(conclusion, True)
-            print("I have completed the task: {}".format(self.task_stack[-1].goal))
-            print("Conclusion: {}".format(self.task_stack[-1].conclusion))
+                        conclusion : str = function_response 
         except Exception as e:
-            self.task_stack[-1].complete(e.args[0], False)
+            conclusion = "Error: " + e.args[0]
         finally:
+            self.task_stack[-1].complete(conclusion, True if "Error" not in conclusion else False)
             conversation.finish()
             self.conversations.append(conversation)
             return self.task_stack[-1].status
         
         # TODO if the task is not completed through a single function call, append a new Function entry to the learning stack
         # self.learning_stack.append(Function(task.type, task.goal, task.goal_predicates))
-        return True
         
     # Function that memorizes information in the robot's memory
     def memorize(self, input:str) -> bool:
         try:
-            schemas = [0, 1, 2]
+            schemas = [0, 1]
             activity = Task(TaskLabel.COGNITION, input)
 
             conversation = Conversation(ConversationType.MEMORIZING)
             conversation.messages.append(Message(Role.SYSTEM, self.load_prompt("memorize_object.txt")))
+            conversation.messages.append(Message(Role.USER, self.load_environment_knowledge()))
             conversation.messages.append(Message(Role.USER, input))
             
             completion = self.process(conversation.messages, [self.cognitive_function_schemas[idx] for idx in schemas], True)
@@ -623,46 +605,20 @@ class Machine():
             if completion is None:
                 raise Exception("I have failed to memorize this information: {}".format(input))
             else:
-                if completion["function_call"]["name"] == "recall":
-                    function_name = completion["function_call"]["name"]
-                    function_args : dict = json.loads(completion["function_call"]["arguments"])
-                    function_to_call = self.cognitive_functions[function_name]
-
-                    try:
-                        function_response = function_to_call(list(function_args.values()))
-                    except Exception as e:
-                        raise Exception("I failed to execute the function for loading memory: {}".format(e.args[0]))
-                    
-                    conversation.messages.append(Message(Role.ASSISTANT_FUNCTION_CALL,
-                                                    {   "role": "function", "name": function_name, "content": function_response}))
-                    completion = self.process(conversation.messages, [self.cognitive_function_schemas[idx] for idx in schemas], True)
-                    if completion is None:
-                        raise Exception("I have failed to recall information from memory")
-                    else:
-                        function_name = completion["function_call"]["name"]
-                        function_args : dict = json.loads(completion["function_call"]["arguments"])
-                        function_to_call = self.cognitive_functions[function_name]
-                        try:
-                            function_response = function_to_call(function_args)
-                        except Exception as e:
-                            raise Exception("I failed to execute the function for updating memory: {}".format(e.args[0]))
-                        activity.complete(function_response, True)
-                else:
-                    function_name = completion["function_call"]["name"]
-                    function_args : dict = json.loads(completion["function_call"]["arguments"])
-                    function_to_call = self.cognitive_functions[function_name]
-                    try:
-                        function_response = function_to_call(function_args)
-                    except Exception as e:
-                        raise Exception("I failed to execute the function for updating memory: {}".format(e.args[0]))        
-                    activity.complete(function_response, True)
+                function_name = completion["function_call"]["name"]
+                function_args : dict = json.loads(completion["function_call"]["arguments"])
+                function_to_call = self.cognitive_functions[function_name]
+                try:
+                    function_response = function_to_call(function_args)
+                except Exception as e:
+                    raise Exception("I failed to execute the function for updating memory: {}".format(e.args[0]))        
+                activity.complete(function_response, True)
         except Exception as e:
             activity.complete(e.args[0], False)
         finally:
             conversation.finish()
             self.conversations.append(conversation)
             self.task_stack.append(activity)
-            print(Style.RESET_ALL)
             return activity.status
 
     def memorize_object(self, object_attributes:dict):
@@ -701,18 +657,15 @@ class Machine():
                     try:
                         json.loads(completion["choices"][0]["message"]["function_call"]["arguments"])
                     except json.JSONDecodeError:
-                        print(Fore.RED + "Error: Getting completion ({}/{}) failed with reason: Faulty JSON object returned.".format(iteration + 1, MAX_RETRIES))
-                        print(Style.RESET_ALL)
+                        print(Fore.RED + "Error: Getting completion ({}/{}) failed with reason: Faulty JSON object returned.".format(iteration + 1, MAX_RETRIES) + Style.RESET_ALL)
                         continue
                     return completion["choices"][0]["message"]
                 elif must_call:
-                    print(Fore.RED + "Error: Getting completion ({}/{}) failed with reason: Expected function call.".format(iteration + 1, MAX_RETRIES))
-                    print(Style.RESET_ALL)
+                    print(Fore.RED + "Error: Getting completion ({}/{}) failed with reason: Expected function call.".format(iteration + 1, MAX_RETRIES) + Style.RESET_ALL)
                 else:
                     return completion["choices"][0]["message"]
             except Exception as e:
-                print(Fore.RED + "Error: Getting completion ({}/{}) failed with reason: {}".format(iteration + 1, MAX_RETRIES, e))
-                print(Style.RESET_ALL)
+                print(Fore.RED + "Error: Getting completion ({}/{}) failed with reason: {}".format(iteration + 1, MAX_RETRIES, e) + Style.RESET_ALL)
                 if not function_library:
                     continue
                 else:
@@ -730,10 +683,9 @@ class Machine():
                             f.flush()
                         return prompt
                     except OSError as e:
-                        print(Fore.RED + "Error: Prompt {} could not be loaded with reason: {}".format(prompt_name, e.args[0]))
-                        print(Style.RESET_ALL)
+                        print(Fore.RED + "Error: Prompt {} could not be loaded with reason: {}".format(prompt_name, e.args[0]) + Style.RESET_ALL)
                         return None
-        print(Fore.RED + "Error: Prompt {} not found following path:\n {}".format(prompt_name, os.path.abspath(os.path.join(root, name))))
+        print(Fore.RED + "Error: Prompt {} not found following path:\n {}".format(prompt_name, os.path.abspath(os.path.join(root, name))) + Style.RESET_ALL)
     
     # Function that returns the number of tokens used by a list of messages and optionally a list of functions
     # Inspired from: https://platform.openai.com/docs/guides/gpt/managing-tokens
@@ -767,19 +719,21 @@ class Machine():
         # Read from most recent to oldest
         if self.task_stack:
             for task in reversed(self.task_stack):
-                if not task.status == TaskStatus.COMPLETED or TaskStatus.FAILED:
-                    if task.status == TaskStatus.NEW or task.status == TaskStatus.PAUSED: task.start()
+                if not task.status == TaskStatus.COMPLETED:
+                    if task.status == TaskStatus.NEW or task.status == TaskStatus.PAUSED or TaskStatus.FAILED: task.start()
                     if self.make_decision(self.task_stack.index(task)) == TaskStatus.COMPLETED:
+                        print("Current Goal: " + task.goal)
+                        if task.conclusion and "complete" not in task.conclusion:
+                            print(Fore.MAGENTA + self.task_stack[-2].conclusion + "({})".format(self.task_stack[-1].type.name) + Style.RESET_ALL)
                         self.act()
                         break
                     else: 
-                        print(Fore.RED + "Error: Decision making failed. Retrying...")
-                        print(Style.RESET_ALL)
+                        print(Fore.RED + "Error: Decision making failed. Retrying..." + Style.RESET_ALL)
                         break
         return 
     
     def fill_memory_with_objects(self, objects:list[Object], basic_knowledge:bool=False):
         for object in objects:
             if basic_knowledge:
-                self.memorize_object({attribute: getattr(object, attribute) for attribute in ['name', 'color', 'shape', 'material']})
+                self.memorize_object({attribute: getattr(object, attribute) for attribute in ['name', 'color', 'shape', 'material', 'weight', 'support_surface']})
             else: self.memorize_object(object)

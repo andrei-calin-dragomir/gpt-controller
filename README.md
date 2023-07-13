@@ -32,8 +32,13 @@ poetry install
     Open the `config.py` file in the root directory and fill all the entries with the required information.
 
 ## Usage
-To run the project, execute the following command:
+To run the project, first, run the `poetry shell` using the following command:
 
+```bash
+poetry shell
+```
+
+Then execute the following command:
 ```bash
 poetry run python -m run.py
 ```
@@ -43,5 +48,5 @@ You have access to utility functions in order to get a view on the knowledge of 
 To access them you can type `--help` in the console and you will be presented with a list of available commands.
 
 ## Evaluation
-The evaluation of the system's performance is done within the manual.ipynb notebook. The notebook contains a set of tests that can be run in order to evaluate the system's prompting accuracy, conversation length and other metrics.
+The evaluation of the system's performance is done within the `manual.ipynb` notebook. The notebook contains a set of tests that can be run in order to evaluate the system's prompting accuracy, conversation length and other metrics.
 

@@ -5,7 +5,7 @@ class Environment:
     objects : list[Object] = []
 
     def __init__(self, scene:str):
-        self.create_object({"name" : "ground", "color" : "brown", "shape" : Shape.CUBOIDAL, "material" : Material.WOOD, "location" : {"x" : 0, "y" : 0, "z" : 0}})
+        self.create_object({"name" : "floor", "color" : "brown", "shape" : Shape.CUBOIDAL, "material" : Material.WOOD, "x" : 0, "y" : 0, "z" : 0, "length" : 100, "width" : 100, "height" : 1, "capabilities" : Capability.FIXED, "support_surface" : None})
 
         if scene == "kitchen":
             self.load_kitchen()
@@ -13,44 +13,33 @@ class Environment:
             self.load_workstation()
         else:
             raise Exception("Scene not found")
-        
-    def create_object(self, name:str, color:str = None, shape:Shape=None, material:str=None):
-        obj = Object(name, color, shape, material)
-        pass
 
     # Store an object in another object
-    # The container object must exist and must have the container value set to True
     def put_object_in(self, object_name:str, container_name:str):
         container = self.get_object(container_name)
-        container.contains.append(self.get_object(object_name))
-        self.remove_object(object_name)
+        object = self.get_object(object_name)
+        object.capabilities.remove(Capability.VISIBLE)
+        container.contains.append(object_name)
+        self.place_object_on(object_name, container_name)
+        object.container = container_name
     
     # Place an object on another object
     # Both objects must exist
     def place_object_on(self, object_name:str, support_name:str):
+        support = self.get_object(support_name)
         for obj in self.objects:
             if obj.name == object_name:
+                obj.x = support.x
+                obj.y = support.y
+                obj.z = support.z
                 obj.support_surface = support_name
                 return True
-
-    def get_visible_objects(self, location:Coordinates):
-        objects_in_view = []
-        for obj in self.objects:
-            if math.dist(location, obj.location) < 2:
-                objects_in_view.append(obj)
-
-        return objects_in_view
 
     # Get object instance by name
     def get_object(self, name:str):
         for obj in self.objects:
             if obj.name == name:
                 return obj
-            else:
-                if obj.contains is not None:
-                    for contained_object in obj.contains:
-                        if contained_object.name == name:
-                            return contained_object
         return None
     
     def remove_object(self, name:str):
@@ -58,11 +47,6 @@ class Environment:
             if obj.name == name:
                 self.objects.remove(obj)
                 return True
-            else:
-                for contained_object in obj.contains:
-                    if contained_object.name == name:
-                        obj.contains.remove(contained_object)
-                        return True
         return False
 
     def create_object(self, object_attributes:dict):
@@ -72,22 +56,34 @@ class Environment:
     def create_object_slices(self, object_name:str):
         object = self.get_object(object_name)
         new_object = Object({
-            "name" : "part of" + object.name,
+            "name" : "slice of " + object.name,
             "color" : object.color,
             "shape" : object.shape,
             "material" : object.material,
-            "dimensions" : Dimensions(object.dimensions.length/2, object.dimensions.width/2, object.dimensions.height/2),
-            "location" : object.location,
+            "length" : object.length/2,
+            "x" : object.x - object.length/4,
+            "support_surface" : object.support_surface,
+            "capabilities" : object.capabilities,
+            "contains" : object.contains
+        })
+        new_object_2 = Object({
+            "name" : "slice of " + object.name,
+            "color" : object.color,
+            "shape" : object.shape,
+            "material" : object.material,
+            "length" : object.length/2,
+            "x" : object.x + object.length/4,
             "support_surface" : object.support_surface,
             "capabilities" : object.capabilities,
             "contains" : object.contains
         })
         self.remove_object(object_name)
         self.objects.append(new_object)
-        self.objects.append(Object(self.get_object(object_name)))
+        self.objects.append(new_object_2)
 
     # Load a kitchen environment
     def load_kitchen(self):
+
 
         # Create objects
         self.create_object({"name" : "knife", "color" : "silver", "shape" : Shape.OTHER, "material" : Material.METAL})
@@ -107,16 +103,19 @@ class Environment:
         self.create_object({"name" : "sink", "color" : "white", "shape" : Shape.CUBOIDAL, "material" : Material.CERAMIC})
         self.create_object({"name" : "oven", "color" : "black", "shape" : Shape.CUBOIDAL, "material" : Material.METAL})
         self.create_object({"name" : "microwave", "color" : "black", "shape" : Shape.CUBOIDAL, "material" : Material.METAL})
-        self.create_object({"name" : "fridge", "color" : "white", "shape" : Shape.CUBOIDAL, "material" : Material.METAL})
-        self.create_object({"name" : "base_cabinet", "color" : "brown", "shape" : Shape.CUBOIDAL, "material" : Material.WOOD, "location" : {"x" : 5, "y" : 10, "z" : 5}})
+        self.create_object({"name" : "fridge", "color" : "white", "shape" : Shape.CUBOIDAL, "material" : Material.METAL, "x" : 1, "y" : 0.5, "z" : 0.5})
+        self.create_object({"name" : "base_cabinet", "color" : "brown", "shape" : Shape.CUBOIDAL, "material" : Material.WOOD, "x" : 0.5, "y" : 0.5, "z" : 0.5})
         self.create_object({"name" : "wall_cabinet", "color" : "brown", "shape" : Shape.CUBOIDAL, "material" : Material.WOOD})
 
+        self.place_object_on("table", "floor")
         self.get_object("base_cabinet").add_capability(Capability.CONTAINER)
         self.put_object_in("plate", "base_cabinet")
         self.put_object_in("cup", "base_cabinet")
         self.put_object_in("bowl", "base_cabinet")
         self.put_object_in("pan", "base_cabinet")
         self.put_object_in("pot", "base_cabinet")
+
+        self.place_object_on("microwave", "base_cabinet")
 
         self.place_object_on("cutting_board", "table")
         self.place_object_on("knife", "table")
@@ -132,12 +131,20 @@ class Environment:
         self.create_object({"name" : "orange", "color" : "orange", "shape" : Shape.SPHERICAL, "material" : Material.OTHER})
         self.create_object({"name" : "tomato", "color" : "red", "shape" : Shape.SPHERICAL, "material" : Material.OTHER})
         self.create_object({"name" : "potato", "color" : "brown", "shape" : Shape.SPHERICAL, "material" : Material.OTHER})
+        self.create_object({"name" : "onion", "color" : "white", "shape" : Shape.SPHERICAL, "material" : Material.OTHER})
+        self.create_object({"name" : "cucumber", "color" : "green", "shape" : Shape.CYLINDRICAL, "material" : Material.OTHER})
+        self.create_object({"name" : "carrot", "color" : "orange", "shape" : Shape.CYLINDRICAL, "material" : Material.OTHER})
+        self.create_object({"name" : "lettuce", "color" : "green", "shape" : Shape.OTHER, "material" : Material.OTHER})
 
         self.get_object("fridge").add_capability(Capability.CONTAINER)
         self.put_object_in("egg", "fridge")
         self.put_object_in("milk", "fridge")
         self.put_object_in("apple", "fridge")
         self.put_object_in("orange", "fridge")
+        self.put_object_in("onion", "fridge")
+        self.put_object_in("cucumber", "fridge")
+        self.put_object_in("carrot", "fridge")
+        self.put_object_in("lettuce", "fridge")
 
         self.get_object("wall_cabinet").add_capability(Capability.CONTAINER)
         self.put_object_in("banana", "wall_cabinet")

@@ -8,11 +8,12 @@ if __name__ == "__main__":
     machine = Machine(environment)
 
     # You can change the information that the machine should start with in mind by setting basic_knowledge
-    machine.fill_memory_with_objects(random.sample(environment.objects, random.randint(5, len(environment.objects))), basic_knowledge=True)
+    machine.fill_memory_with_objects(environment.objects, basic_knowledge=True)
 
     try:
         while True:
-            user_input = input("Enter command (for help functions type '--help') or press Enter to skip:")
+            # user_input = input("Enter command (for help functions type '--help') or press Enter to skip:")
+            user_input = input()
             if user_input.startswith("--"):
                 if user_input == "--objects_known":
                     for object in machine.object_knowledge:
@@ -43,5 +44,4 @@ if __name__ == "__main__":
                 if machine.task_stack: machine.task_stack[-1].print_conclusion()
 
     except EOFError:
-        print(Fore.RED + "\nExiting...")
-        print(Style.RESET_ALL)
+        print(Fore.RED + "\nExiting..." + Style.RESET_ALL)
