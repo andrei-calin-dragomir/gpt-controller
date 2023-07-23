@@ -9,18 +9,18 @@ class Label(Enum):
     def get_prompt_content(cls):
         prompt_content = "Labels:\n"
         for label in cls.__members__.keys():
-            prompt_content += "{}: {}\n".format(label, cls.__members__[label].value)
+            prompt_content += "{} = {}\n".format(label, cls.__members__[label].value)
         return prompt_content
     
 class UserInputLabel(Label):
-    TASK                        = "New task to be completed (examples: 'Pick up the tomato.', 'Open the drawer.', 'Cut the tomato.')"
-    QUESTION_ENV_KNOWLEDGE      = "Question to be answered about the surrounding environment of the robot such as objects and locations (examples: 'What is the color of the table?', 'Where is the tomato?', 'What can you use to cut the tomato?')"
-    QUESTION_GEN_KNOWLEDGE      = "Question to be answered about general knowledge (examples: 'How heavy is a tomato on average?', 'What is the size of the Eiffel Tower?')"
-    METHODOLOGY                 = "Advice related to the method in which you can fulfill a task (examples: 'You can pick up the tomato by grasping it from above.', 'You can open drawers by pulling them outwards.')"
-    LIMITATION                  = "Input related to what limitations you have when fulfilling a task (examples: 'You must only use a knife to cut a tomato', 'You must only use tomatoes from the fridge.', 'You must cut the tomato on a cutting board.')"
-    OBJECT_INFORMATION          = "Advice related to the information of an object (examples: 'The tomato is in the fridge.', 'The tomato is in the drawer.', 'The tomato is on the table.', 'The tomato is red.', 'The tomato is 100 grams.')"
-    ABORT                       = "Abort the current task (examples: 'Stop what you're doing.')"
-    UNCERTAIN                   = "None of the above tags apply (examples: 'I think cats are cute.')"
+    TASK                        = "New task to be completed by the robot (example: 'Pick up object x', 'Go to location y', 'Take object x to location y', etc.)"
+    QUESTION_ENV_KNOWLEDGE      = "Question to be answered about the surrounding environment of the robot such as objects and locations. It is formulated as a question that can be answered with a single word or a short phrase (example: 'Where is x?', 'What is the color of x?', 'What is the size of x?', etc.)"
+    QUESTION_GEN_KNOWLEDGE      = "Question to be answered about non-situation specific knowledge. It is formulated as a question that can be answered with a single word or a short phrase (example: 'What is x?', 'What is the usual color of x?', 'What is the average size of x?', etc.)"
+    METHODOLOGY                 = "Advice related to the method in which the robot can fulfill a certain action. It usually includes 'should' or 'could' but it is not limited to those words (example: 'You should pick up object x from the top.', 'You could use object x to do action y.', etc.))"
+    LIMITATION                  = "Input related to what limitations the robot has when fulfilling a task from the user. It usually includes negative words such as 'cannot', 'should not', 'could not', etc. (example: 'You cannot use object x', 'You must not touch object x after you do actio y etc.)"
+    OBJECT_INFORMATION          = "Attribute information regarding an object in the environment of the robot. It usually addresses a specific object, defining its attributes such as color, size, shape, etc. (example: 'Object x is red.', 'Object x is small.', 'There is an object x in location y.', etc.)"
+    ABORT                       = "A request provided to the robot to abort the current task (example: 'Abort the current task.', 'Stop what you are doing.', 'Stop.', etc.)"
+    UNCERTAIN                   = "None of the above tags apply to this input"
 
 class AdviceLabel(Label):
     METHODOLOGY         = UserInputLabel.METHODOLOGY

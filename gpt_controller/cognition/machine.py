@@ -409,6 +409,7 @@ class Machine():
         conversation = Conversation(ConversationType.LABELLING)
         conversation.messages.append(Message(Role.SYSTEM, self.load_prompt('label_input.txt')))
         conversation.messages.append(Message(Role.USER, tags.get_prompt_content()))
+        conversation.messages.append(Message(Role.ASSISTANT, "OK, provide the text to be labelled"))
         conversation.messages.append(Message(Role.USER, input))
         label = None
         completion = self.process(conversation.messages)
